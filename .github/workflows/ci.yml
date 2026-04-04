@@ -12,7 +12,9 @@ on:
 jobs:
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
+    environment: MONGO_URI
 
     steps:
       - name: Checkout Code
@@ -23,10 +25,36 @@ jobs:
         with:
           node-version: 22
 
+      - name: Stop Running Services
+        run: pm2 stop all || true
+
       - name: Install Backend Dependencies
         working-directory: ./backend
-        run: npm install
+        run: yarn install
+
+      - name: Install Frontend Dependencies and Build
+        working-directory: ./frontend
+        run: |
+          sudo rm -rf ./build
+          yarn install
+          yarn run build
 
       - name: Run Backend Tests
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
         working-directory: ./backend
         run: npm test
+
+      - name: Create .env File
+        run: |
+          cd ./backend
+          touch .env
+          echo "${{ secrets.PROD }}" > .env
+
+      - name: Start Services
+        working-directory: ./backend
+        run: |
+          pm2 stop all || true
+          pm2 start server.js --name "backend" || pm2 restart backend
