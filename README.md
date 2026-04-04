@@ -22,7 +22,7 @@ The project includes:
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### **Frontend**
 - React.js
