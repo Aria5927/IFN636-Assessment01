@@ -2,7 +2,7 @@ const HealthRecord = require('../models/HealthRecord');
 
 const getRecords = async (req, res) => {
     try {
-        const records = await HealthRecord.find({ userId: req.user._id });
+        const records = await HealthRecord.find({}).populate('userId','name email');
         res.json(records);
     } catch (error) {
         res.status(500).json({ message: error.message });
