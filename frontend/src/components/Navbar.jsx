@@ -13,13 +13,11 @@ const Navbar = () => {
   return (
     <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
       <Link to="/" className="text-2xl font-bold">Health Record Management</Link>
-      <Link to="/dashboard" className="mr-4">Dashboard</Link>
       <div>
         {user ? (
           <>
             <Link to="/tasks" className="mr-4">CRUD</Link>
             <Link to="/records" className="mr-4">Health Records</Link>
-            <Link to="/profile" className="mr-4">Profile</Link>
             <button
               onClick={handleLogout}
               className="bg-red-500 px-4 py-2 rounded hover:bg-red-700"
