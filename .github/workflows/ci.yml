@@ -30,15 +30,12 @@ jobs:
 
       - name: Install Backend Dependencies
         working-directory: ./backend
-        env:
-          CI: false
-        run: |
-          sudo rm -rf ./build
-          npm install
-          npm run build
+        run: npm install
 
       - name: Install Frontend Dependencies and Build
         working-directory: ./frontend
+        env:
+          CI: false
         run: |
           sudo rm -rf ./build
           npm install
