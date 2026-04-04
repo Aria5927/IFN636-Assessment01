@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-const getProfile = async (req, res) => {
+/*const getProfile = async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
       if (!user) {
@@ -50,9 +50,9 @@ const getProfile = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
-  };
+  };*/
 
-const updateUserProfile = async (req, res) => {
+/*const updateUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
@@ -68,6 +68,6 @@ const updateUserProfile = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+};*/
 
-module.exports = { registerUser, loginUser, updateUserProfile, getProfile };
+module.exports = { registerUser, loginUser };
