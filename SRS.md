@@ -18,8 +18,6 @@
 4. [Constraints](#4-Constraints)
 5. [Functional Requirements](#5-Functional-Requirements)
 6. [Non-Functional Requirement](#6-Non-Functional-Requirement)
-7. [API Specification](#7-api-specification)
-8. [Constraints and Assumptions](#8-constraints-and-assumptions)
 
 ---
 
@@ -138,63 +136,3 @@ NFR-13: The user interface shall allow a new Doctor to register and create their
 NFR-14: The statistics dashboard shall present data in a clear visual format that does not require technical knowledge to interpret.
 
 ---
-
-## 7. API Specification
-
-Base URL: `/api/records`
-
-| Method | Endpoint | Auth Required | Description | Success Code |
-|---|---|---|---|---|
-| GET | `/api/records` | Yes | Get all records (admin) or own records (user) | 200 |
-| POST | `/api/records` | Yes | Create a new health record | 201 |
-| PUT | `/api/records/:id` | Yes | Update a specific health record | 200 |
-| DELETE | `/api/records/:id` | Yes | Delete a specific health record | 200 |
-
-### 7.1 Example Request — Create Record
-```http
-POST /api/records
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "diagnosis": "Hypertension",
-  "notes": "Blood pressure 140/90",
-  "date": "2026-04-19"
-}
-```
-
-### 7.2 Example Response — Success
-```json
-{
-  "_id": "661f0a1e8f1b2c0012345678",
-  "userId": "661f0a1e8f1b2c0012345600",
-  "diagnosis": "Hypertension",
-  "notes": "Blood pressure 140/90",
-  "date": "2026-04-19T00:00:00.000Z"
-}
-```
-
-### 7.3 Example Response — Error (404)
-```json
-{
-  "message": "Record not found"
-}
-```
-
----
-
-## 8. Constraints and Assumptions
-
-### 8.1 Constraints
-- The system uses MongoDB as the only supported database
-- Authentication relies on JWT; session-based auth is out of scope
-- The system is designed for small to medium scale usage
-
-### 8.2 Assumptions
-- All users must register and log in before accessing health records
-- The `req.user` object is populated by authentication middleware before reaching any controller
-- Admin role is assigned at the database level (e.g., `isAdmin: true` field on the User model)
-
----
-
-
