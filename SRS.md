@@ -72,6 +72,8 @@ Administrators have the highest level of access within the system. They can view
 
 The system is subject to several technical constraints. MongoDB Atlas is the only supported database, and no relational database alternatives are used. Authentication is implemented exclusively using JWT; session-based authentication is not supported. The backend is built with Node.js and Express, and the frontend is developed in React.js, served as a static build via Nginx.
 
+The system is subject to several risks that may affect its operation. Unauthorised access attempts are mitigated through JWT authentication and role-based access control. Database unavailability is mitigated through MongoDB Atlas's built-in replication and automated failover. CI/CD pipeline failures are mitigated by monitoring GitHub Actions logs and maintaining a stable version on the main branch at all times. Load balancer misconfiguration is mitigated by verifying target group health checks before deployment.
+
 ---
 
 ## 5. Functional Requirements
@@ -121,18 +123,20 @@ NFR-03: All API endpoints except /api/auth/register and /api/auth/login shall re
 NFR-04: Users shall not be able to access, modify, or delete health records that they are not authorised to access based on their role.
 NFR-05: All user passwords shall be hashed using bcrypt before being stored in the database.
 NFR-06: All sensitive configuration values (MONGO_URI, JWT_SECRET, PORT) shall be stored as environment variables and excluded from version control.
+NFR-07: The system shall validate all user inputs on the server side to prevent malformed or malicious data from being processed.
 
 ### Reliability
-NFR-07: The system shall return appropriate HTTP status codes (200, 201, 400, 401, 404, 500) for all API responses.
-NFR-08: All server-side errors shall be caught and returned as structured JSON error messagesNFR-09The system shall maintain high availability through a load-balanced AWS EC2 deployment across two instances.
+NFR-08: The system shall return appropriate HTTP status codes (200, 201, 400, 401, 404, 500) for all API responses.
+NFR-09: All server-side errors shall be caught and returned as structured JSON error messagesNFR-09The system shall maintain high availability through a load-balanced AWS EC2 deployment across two instances.
+NFR-10: The system shall use MongoDB Atlas's built-in replication and automated backup features to protect against data loss. NFR-11: In the event of a single EC2 instance failure, the AWS Application Load Balancer shall automatically redirect all traffic to the remaining healthy instance.
 
 ### Maintainability
-NFR-10: The codebase shall follow the MVC architectural pattern to separate concerns across model, controller, and route layers.
-NFR-11: The codebase shall be version-controlled using Git with feature branches and pull requests for all changes.
-NFR-12: The CI/CD pipeline shall automatically run tests on every push and deploy to EC2 on merge to the main branch.
+NFR-12: The codebase shall follow the MVC architectural pattern to separate concerns across model, controller, and route layers.
+NFR-13: The codebase shall be version-controlled using Git with feature branches and pull requests for all changes.
+NFR-14: The CI/CD pipeline shall automatically run tests on every push and deploy to EC2 on merge to the main branch.
 
 ### Usability
-NFR-13: The user interface shall allow a new Doctor to register and create their first health record without assistance.
-NFR-14: The statistics dashboard shall present data in a clear visual format that does not require technical knowledge to interpret.
+NFR-15: The user interface shall allow a new Doctor to register and create their first health record without assistance.
+NFR-16: The statistics dashboard shall present data in a clear visual format that does not require technical knowledge to interpret.
 
 ---
