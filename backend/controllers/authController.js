@@ -12,7 +12,6 @@ const registerUser = async (req, res) => {
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-        // Admin accounts cannot be self-registered
         if (role === 'Admin') {
             return res.status(403).json({ message: 'Admin accounts cannot be self-registered' });
         }
@@ -50,44 +49,4 @@ const loginUser = async (req, res) => {
     }
 };
 
-const getProfile = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.status(200).json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            status: user.status
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
-
-const updateUserProfile = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        const { name, email } = req.body;
-        user.name = name || user.name;
-        user.email = email || user.email;
-
-        const updatedUser = await user.save();
-        res.json({ 
-            id: updatedUser.id, 
-            name: updatedUser.name, 
-            email: updatedUser.email,
-            role: updatedUser.role,
-            token: generateToken(updatedUser.id) 
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-module.exports = { registerUser, loginUser, getProfile, updateUserProfile };
+module.exports = { registerUser, loginUser };
