@@ -1,8 +1,27 @@
 const HealthRecord = require('../models/HealthRecord');
 
+// GET /api/records - Role based access
 const getRecords = async (req, res) => {
     try {
-        const records = await HealthRecord.find({}).populate('userId','name email');
+        let filter = {};
+
+        // Patient can only view their own records
+        if (req.user.role === 'Patient') {
+            filter.userId = req.user._id;
+        }
+
+        // Filtering and search (New Feature 1)
+        if (req.query.gender) {
+            filter.gender = req.query.gender;
+        }
+        if (req.query.bloodType) {
+            filter.bloodType = req.query.bloodType;
+        }
+        if (req.query.diagnosis) {
+            filter.diagnosis = { $regex: req.query.diagnosis, $options: 'i' };
+        }
+
+        const records = await HealthRecord.find(filter).populate('userId', 'name email');
         res.json(records);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -24,7 +43,7 @@ const createRecord = async (req, res) => {
 const updateRecord = async (req, res) => {
     try {
         const record = await HealthRecord.findOneAndUpdate(
-            { _id: req.params.id, userId: req.user._id },
+            { _id: req.params.id },
             req.body,
             { new: true }
         );
@@ -39,9 +58,7 @@ const updateRecord = async (req, res) => {
 
 const deleteRecord = async (req, res) => {
     try {
-        const record = await HealthRecord.findOneAndDelete(
-            { _id: req.params.id, userId: req.user._id }
-        );
+        const record = await HealthRecord.findOneAndDelete({ _id: req.params.id });
         if (!record) {
             return res.status(404).json({ message: 'Record not found' });
         }
@@ -51,4 +68,28 @@ const deleteRecord = async (req, res) => {
     }
 };
 
-module.exports = { getRecords, createRecord, updateRecord, deleteRecord };
+const getStats = async (req, res) => {
+    try {
+        const totalRecords = await HealthRecord.countDocuments();
+
+        const bloodTypeDistribution = await HealthRecord.aggregate([
+            { $group: { _id: '$bloodType', count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const genderDistribution = await HealthRecord.aggregate([
+            { $group: { _id: '$gender', count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        res.json({
+            totalRecords,
+            bloodTypeDistribution,
+            genderDistribution
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { getRecords, createRecord, updateRecord, deleteRecord, getStats };
