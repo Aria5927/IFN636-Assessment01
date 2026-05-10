@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 const mongoose = require('mongoose');
 const HealthRecord = require('../models/HealthRecord');
-const { getRecords, createRecord, deleteRecord, updateRecord } = require('../controllers/recordController');
+const { getRecords, createRecord, deleteRecord } = require('../controllers/recordController');
 
 describe('HealthRecord Controller Tests', () => {
 

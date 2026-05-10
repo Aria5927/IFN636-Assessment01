@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const db = require('./config/db');
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.use('/api/doctor', require('./routes/doctorRoutes'));
 app.use('/api/patient', require('./routes/patientRoutes'));
 
 if (require.main === module) {
-    connectDB();
+    db.connect();
     const PORT = process.env.PORT || 5001;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
