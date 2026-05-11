@@ -1,24 +1,14 @@
 const HealthRecord = require('../models/HealthRecord');
+const RecordFilter = require('../strategies/filterStrategy');
 
 // GET /api/records - Role based access
 const getRecords = async (req, res) => {
     try {
-        let filter = {};
+        const recordFilter = new RecordFilter();
+        let filter = recordFilter.buildFilter(req.query);
 
-        // Patient can only view their own records
         if (req.user.role === 'Patient') {
             filter.userId = req.user._id;
-        }
-
-        // Filtering and search (New Feature 1)
-        if (req.query.gender) {
-            filter.gender = req.query.gender;
-        }
-        if (req.query.bloodType) {
-            filter.bloodType = req.query.bloodType;
-        }
-        if (req.query.diagnosis) {
-            filter.diagnosis = { $regex: req.query.diagnosis, $options: 'i' };
         }
 
         const records = await HealthRecord.find(filter).populate('userId', 'name email');
@@ -27,6 +17,7 @@ const getRecords = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 const createRecord = async (req, res) => {
     try {
