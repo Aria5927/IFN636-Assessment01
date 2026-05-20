@@ -19,6 +19,13 @@ const updateDoctorProfile = async (req, res) => {
             return res.status(404).json({ message: 'Doctor not found' });
         }
 
+        if (req.body.email && req.body.email !== doctor.email) {
+            const emailExists = await User.findOne({ email: req.body.email });
+            if (emailExists) {
+                return res.status(400).json({ message: 'Email already in use' });
+            }
+        }
+
         const { name, email } = req.body;
         doctor.name = name || doctor.name;
         doctor.email = email || doctor.email;
